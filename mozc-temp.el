@@ -34,6 +34,8 @@
 
 (defvar mozc-temp-auto-conversion-p nil)
 
+(defvar mozc-temp-remove-space-p t)
+
 (defvar mozc-temp-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map [remap mozc-handle-event] #'mozc-temp--handle-event)
@@ -42,6 +44,8 @@
 (defvar mozc-temp--mozc-has-completed-conversion-p nil)
 
 (defvar mozc-temp--mozc-has-fallen-back-p nil)
+
+(defvar mozc-temp--space-marker nil)
 
 (defun mozc-temp--handle-event (event)
   (interactive (list last-command-event))
@@ -52,13 +56,23 @@
                 mozc-temp--mozc-has-fallen-back-p)
         (mozc-temp-mode -1)))))
 
+(defun mozc-temp--remove-space ()
+  (when mozc-temp--space-marker
+    (save-excursion
+      (goto-char mozc-temp--space-marker)
+      (delete-char 1))))
+
 ;;;###autoload
 (define-minor-mode mozc-temp-mode
   "Temporary mozc mode"
   :keymap mozc-temp-mode-map
   (if mozc-temp-mode
       (mozc-mode 1)
-    (mozc-mode -1)))
+    (mozc-mode -1)
+    (when mozc-temp-remove-space-p
+      (undo-boundary)
+      (mozc-temp--remove-space))
+    (setq mozc-temp--space-marker nil)))
 
 
 (defadvice mozc-send-key-event (after mozc-temp activate)
@@ -83,7 +97,13 @@
                               (re-search-backward
                                (regexp-quote (match-string 1)) nil t)))))
                (prefix (buffer-substring-no-properties head tail)))
+    (undo-boundary)
     (delete-region head tail)
+    (let ((point (save-excursion
+                   (re-search-backward "\\w \\=" (point-at-bol) t))))
+      (when point
+        (setq mozc-temp--space-marker
+              (set-marker (make-marker) (1+ point)))))
     (mozc-temp-mode 1)
     (-each (append (string-to-list prefix)
                    (when mozc-temp-auto-conversion-p
