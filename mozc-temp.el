@@ -77,7 +77,7 @@
 
 (defadvice mozc-send-key-event (after mozc-temp activate)
   (setq mozc-temp--mozc-has-completed-conversion-p
-       (mozc-protobuf-get ad-return-value 'result)))
+        (mozc-protobuf-get ad-return-value 'result)))
 
 (defadvice mozc-fall-back-on-default-binding (after mozc-temp activate)
   (setq mozc-temp--mozc-has-fallen-back-p t))
