@@ -82,16 +82,16 @@
 (defadvice mozc-fall-back-on-default-binding (after mozc-temp activate)
   (setq mozc-temp--mozc-has-fallen-back-p t))
 
+(defun mozc-temp--search-prefix-backward ()
+  (re-search-backward mozc-temp-prefix-regexp (point-at-bol) t))
+
 ;;;###autoload
 (defun mozc-temp-convert ()
   "Convert the current word with mozc."
   (interactive)
   (-when-let* ((tail (point))
                (head (save-match-data
-                       (and (save-excursion
-                              (re-search-backward mozc-temp-prefix-regexp
-                                                  (point-at-bol)
-                                                  t))
+                       (and (save-excursion (mozc-temp--search-prefix-backward))
                             ;; move the cursor to the first matched group
                             (save-excursion
                               (re-search-backward
@@ -109,6 +109,15 @@
                    (when mozc-temp-auto-conversion-p
                      '(? )))
       #'mozc-temp--handle-event)))
+
+;;;###autoload
+(defun mozc-temp-convert-dwim ()
+  (interactive)
+  (if (save-excursion
+        (save-match-data
+          (mozc-temp--search-prefix-backward)))
+      (mozc-temp-convert)
+    (mozc-temp-mode 1)))
 
 (provide 'mozc-temp)
 ;;; mozc-temp.el ends here
