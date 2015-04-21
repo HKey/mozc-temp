@@ -82,21 +82,21 @@
 (defadvice mozc-fall-back-on-default-binding (after mozc-temp activate)
   (setq mozc-temp--mozc-has-fallen-back-p t))
 
-(defun mozc-temp--search-prefix-backward ()
-  (re-search-backward mozc-temp-prefix-regexp (point-at-bol) t))
+(defun mozc-temp--get-prefix ()
+  (save-excursion
+    (save-match-data
+      (and (re-search-backward mozc-temp-prefix-regexp (point-at-bol) t)
+           (match-string 1)))))
 
 ;;;###autoload
 (defun mozc-temp-convert ()
   "Convert the current word with mozc."
   (interactive)
   (-when-let* ((tail (point))
+               (prefix (mozc-temp--get-prefix))
                (head (save-match-data
-                       (and (save-excursion (mozc-temp--search-prefix-backward))
-                            ;; move the cursor to the first matched group
-                            (save-excursion
-                              (re-search-backward
-                               (regexp-quote (match-string 1)) nil t)))))
-               (prefix (buffer-substring-no-properties head tail)))
+                       (save-excursion
+                         (re-search-backward (regexp-quote prefix) nil t)))))
     (undo-boundary)
     (delete-region head tail)
     (let ((point (save-excursion
@@ -113,9 +113,7 @@
 ;;;###autoload
 (defun mozc-temp-convert-dwim ()
   (interactive)
-  (if (save-excursion
-        (save-match-data
-          (mozc-temp--search-prefix-backward)))
+  (if (mozc-temp--get-prefix)
       (mozc-temp-convert)
     (mozc-temp-mode 1)))
 
