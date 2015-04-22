@@ -47,6 +47,18 @@
 
 (defvar mozc-temp--space-marker nil)
 
+(defvar mozc-temp--prefix-overlay nil)
+
+(defun mozc-temp--done ()
+  (when (overlayp mozc-temp--prefix-overlay)
+    (delete-region (overlay-start mozc-temp--prefix-overlay)
+                   (overlay-end mozc-temp--prefix-overlay))
+    (delete-overlay mozc-temp--prefix-overlay))
+  (when mozc-temp-remove-space-p
+    (undo-boundary)
+    (mozc-temp--remove-space))
+  (mozc-temp-mode -1))
+
 (defun mozc-temp--handle-event (event)
   (interactive (list last-command-event))
   (let ((mozc-temp--mozc-has-completed-conversion-p nil)
@@ -54,13 +66,17 @@
     (prog1 (mozc-handle-event event)
       (when (or mozc-temp--mozc-has-completed-conversion-p
                 mozc-temp--mozc-has-fallen-back-p)
-        (mozc-temp-mode -1)))))
+        (mozc-temp--done)))))
 
 (defun mozc-temp--remove-space ()
   (when mozc-temp--space-marker
     (save-excursion
       (goto-char mozc-temp--space-marker)
       (delete-char 1))))
+
+(defun mozc-temp--cleanup ()
+  (setq mozc-temp--space-marker nil
+        mozc-temp--prefix-overlay nil))
 
 ;;;###autoload
 (define-minor-mode mozc-temp-mode
@@ -69,10 +85,7 @@
   (if mozc-temp-mode
       (mozc-mode 1)
     (mozc-mode -1)
-    (when mozc-temp-remove-space-p
-      (undo-boundary)
-      (mozc-temp--remove-space))
-    (setq mozc-temp--space-marker nil)))
+    (mozc-temp--cleanup)))
 
 
 (defadvice mozc-send-key-event (after mozc-temp activate)
@@ -98,8 +111,10 @@
                        (save-excursion
                          (re-search-backward (regexp-quote prefix) nil t)))))
     (undo-boundary)
-    (delete-region head tail)
+    (setq mozc-temp--prefix-overlay (make-overlay head tail))
+    (overlay-put mozc-temp--prefix-overlay 'invisible t)
     (let ((point (save-excursion
+                   (goto-char head)
                    (re-search-backward "\\w \\=" (point-at-bol) t))))
       (when point
         (setq mozc-temp--space-marker
