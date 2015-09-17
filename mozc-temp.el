@@ -49,10 +49,14 @@
 
 (defvar mozc-temp--prefix-overlay nil)
 
+(defun mozc-temp--delete-overlay-region (overlay)
+  "Delete the text in the region of OVERLAY."
+  (when (overlayp overlay)
+    (delete-region (overlay-start ovarlay)
+                   (overlay-end overlay))))
+
 (defun mozc-temp--done ()
-  (when (overlayp mozc-temp--prefix-overlay)
-    (delete-region (overlay-start mozc-temp--prefix-overlay)
-                   (overlay-end mozc-temp--prefix-overlay)))
+  (mozc-temp--delete-overlay-region mozc-temp--prefix-overlay)
   (when mozc-temp-remove-space-p
     (undo-boundary)
     (mozc-temp--remove-space))
@@ -68,9 +72,7 @@
         (mozc-temp--done)))))
 
 (defun mozc-temp--remove-space ()
-  (when (overlayp mozc-temp--space-overlay)
-    (delete-region (overlay-start mozc-temp--space-overlay)
-                   (overlay-end mozc-temp--space-overlay))))
+  (mozc-temp--delete-overlay-region mozc-temp--space-overlay))
 
 (defun mozc-temp--cleanup ()
   (--each (list mozc-temp--space-overlay mozc-temp--prefix-overlay)
