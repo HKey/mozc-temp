@@ -52,7 +52,7 @@
 (defun mozc-temp--delete-overlay-region (overlay)
   "Delete the text in the region of OVERLAY."
   (when (overlayp overlay)
-    (delete-region (overlay-start ovarlay)
+    (delete-region (overlay-start overlay)
                    (overlay-end overlay))))
 
 (defun mozc-temp--done ()
