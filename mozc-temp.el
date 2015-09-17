@@ -52,8 +52,7 @@
 (defun mozc-temp--done ()
   (when (overlayp mozc-temp--prefix-overlay)
     (delete-region (overlay-start mozc-temp--prefix-overlay)
-                   (overlay-end mozc-temp--prefix-overlay))
-    (delete-overlay mozc-temp--prefix-overlay))
+                   (overlay-end mozc-temp--prefix-overlay)))
   (when mozc-temp-remove-space-p
     (undo-boundary)
     (mozc-temp--remove-space))
@@ -71,10 +70,12 @@
 (defun mozc-temp--remove-space ()
   (when (overlayp mozc-temp--space-overlay)
     (delete-region (overlay-start mozc-temp--space-overlay)
-                   (overlay-end mozc-temp--space-overlay))
-    (delete-overlay mozc-temp--space-overlay)))
+                   (overlay-end mozc-temp--space-overlay))))
 
 (defun mozc-temp--cleanup ()
+  (--each (list mozc-temp--space-overlay mozc-temp--prefix-overlay)
+    (when (overlayp it)
+      (delete-overlay it)))
   (setq mozc-temp--space-overlay nil
         mozc-temp--prefix-overlay nil))
 
