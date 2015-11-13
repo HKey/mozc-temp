@@ -30,7 +30,14 @@
 (require 'dash)
 
 (defvar mozc-temp-prefix-regexp
-  "\\(?:^\\|[^a-zA-Z-,.!?]\\)\\([a-zA-Z-,.!?]+\\)\\=")
+  "\\(?:^\\|[^a-zA-Z-,.!?]\\)\\([a-zA-Z-,.!?]+\\)\\="
+  "A regexp to specify the prefix string for conversion.
+The prefix string is used as pre-input of mozc's conversion.
+
+The default value means (\"|\" means the cursor position):
+  hogehoge hugahuga|
+           ^^^^^^^^
+         prefix string")
 
 (defvar mozc-temp-auto-conversion-p nil)
 
