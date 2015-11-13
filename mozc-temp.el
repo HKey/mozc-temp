@@ -123,13 +123,13 @@ The default value means (\"|\" means the cursor position):
     (save-match-data
       (save-excursion
         (goto-char head)
-        (re-search-backward "\\w\\( \\)\\=" (point-at-bol) t)
-        (-when-let* ((space-beginning (match-beginning 1))
-                     (space-end (match-end 1)))
-          (setq mozc-temp--space-overlay
-                (make-overlay space-beginning space-end))
-          (when mozc-temp-remove-space-p
-            (overlay-put mozc-temp--space-overlay 'invisible t)))))
+        (when (re-search-backward "\\w\\( \\)\\=" (point-at-bol) t)
+          (-when-let* ((space-beginning (match-beginning 1))
+                       (space-end (match-end 1)))
+            (setq mozc-temp--space-overlay
+                  (make-overlay space-beginning space-end))
+            (when mozc-temp-remove-space-p
+              (overlay-put mozc-temp--space-overlay 'invisible t))))))
     (mozc-temp-mode 1)
     (-each (append (string-to-list prefix)
                    (when mozc-temp-auto-conversion-p
