@@ -30,7 +30,8 @@
 (require 'dash)
 
 (defvar mozc-temp-prefix-regexp
-  "\\(?:^\\|[^a-zA-Z-,.!?]\\)\\([a-zA-Z-,.!?]+\\)\\="
+  (let ((convertibles "a-zA-Z-,.!?"))
+    (format "\\(?:^\\|[^%s]\\)\\([%s]+\\)\\=" convertibles convertibles))
   "A regexp to specify the prefix string for conversion.
 The prefix string is used as pre-input of mozc's conversion.
 
