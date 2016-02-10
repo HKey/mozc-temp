@@ -98,7 +98,9 @@ The default value means (\"|\" means the cursor position):
 
 (defadvice mozc-send-key-event (after mozc-temp activate)
   (setq mozc-temp--mozc-has-completed-conversion-p
-        (mozc-protobuf-get ad-return-value 'result)))
+        (or (mozc-protobuf-get ad-return-value 'result)
+            ;; There is no preedit.
+            (null (mozc-protobuf-get ad-return-value 'preedit)))))
 
 (defadvice mozc-fall-back-on-default-binding (after mozc-temp activate)
   (setq mozc-temp--mozc-has-fallen-back-p t))
