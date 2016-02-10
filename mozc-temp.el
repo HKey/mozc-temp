@@ -146,3 +146,8 @@ The default value means (\"|\" means the cursor position):
 
 (provide 'mozc-temp)
 ;;; mozc-temp.el ends here
+
+;; Local Variables:
+;; eval: (when (fboundp (quote flycheck-mode)) (flycheck-mode 1))
+;; eval: (when (fboundp (quote flycheck-package-setup)) (flycheck-package-setup))
+;; End:
