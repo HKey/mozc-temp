@@ -100,9 +100,13 @@ The default value means (\"|\" means the cursor position):
   "Return non-nil if MOZC-SEND-KEY-EVENT-RESULT means that preedit characters have been deleted."
   (null (mozc-protobuf-get mozc-send-key-event-result 'preedit)))
 
+(defun mozc-temp--conversion-completed (mozc-send-key-event-result)
+  "Return non-nil if MOZC-SEND-KEY-EVENT-RESULT means that the conversion has been completed."
+  (mozc-protobuf-get mozc-send-key-event-result 'result))
+
 (defadvice mozc-send-key-event (after mozc-temp activate)
   (setq mozc-temp--mozc-has-completed-conversion-p
-        (or (mozc-protobuf-get ad-return-value 'result)
+        (or (mozc-temp--conversion-completed ad-return-value)
             (mozc-temp--preedit-deleted ad-return-value))))
 
 (defadvice mozc-fall-back-on-default-binding (after mozc-temp activate)
