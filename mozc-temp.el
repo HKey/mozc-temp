@@ -49,9 +49,8 @@ The default value means (\"|\" means the cursor position):
     (define-key map [remap mozc-handle-event] #'mozc-temp--handle-event)
     map))
 
-(defvar mozc-temp--mozc-has-completed-conversion-p nil)
-
-(defvar mozc-temp--mozc-has-fallen-back-p nil)
+(defvar mozc-temp--should-exit nil
+  "Non-nil means that `mozc-temp-mode' should exit.")
 
 (defvar mozc-temp--space-overlay nil)
 
@@ -72,11 +71,9 @@ The default value means (\"|\" means the cursor position):
 
 (defun mozc-temp--handle-event (event)
   (interactive (list last-command-event))
-  (let ((mozc-temp--mozc-has-completed-conversion-p nil)
-        (mozc-temp--mozc-has-fallen-back-p nil))
+  (let ((mozc-temp--should-exit nil))
     (prog1 (mozc-handle-event event)
-      (when (or mozc-temp--mozc-has-completed-conversion-p
-                mozc-temp--mozc-has-fallen-back-p)
+      (when mozc-temp--should-exit
         (mozc-temp--done)))))
 
 (defun mozc-temp--cleanup ()
@@ -105,12 +102,12 @@ The default value means (\"|\" means the cursor position):
   (mozc-protobuf-get mozc-send-key-event-result 'result))
 
 (defadvice mozc-send-key-event (after mozc-temp activate)
-  (setq mozc-temp--mozc-has-completed-conversion-p
+  (setq mozc-temp--should-exit
         (or (mozc-temp--conversion-completed ad-return-value)
             (mozc-temp--preedit-deleted ad-return-value))))
 
 (defadvice mozc-fall-back-on-default-binding (after mozc-temp activate)
-  (setq mozc-temp--mozc-has-fallen-back-p t))
+  (setq mozc-temp--should-exit t))
 
 (defun mozc-temp--get-prefix ()
   (save-excursion
