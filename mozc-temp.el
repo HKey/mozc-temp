@@ -29,7 +29,13 @@
 (require 'mozc)
 (require 'dash)
 
-(defvar mozc-temp-prefix-regexp
+
+(defgroup mozc-temp nil
+  "Temporary `mozc-mode'."
+  :group 'mozc
+  :prefix "mozc-temp-")
+
+(defcustom mozc-temp-prefix-regexp
   (let ((convertibles "a-zA-Z-,.!?"))
     (format "\\(?:^\\|[^%s]\\)\\([%s]+\\)\\=" convertibles convertibles))
   "A regexp to specify the prefix string for conversion.
@@ -38,11 +44,31 @@ The prefix string is used as pre-input of mozc's conversion.
 The default value means (\"|\" means the cursor position):
   hogehoge hugahuga|
            ^^^^^^^^
-         prefix string")
+       a prefix string"
+  :type 'regexp
+  :group 'mozc-temp
+  :package-version '(mozc-temp . "0.1.0"))
 
-(defvar mozc-temp-auto-conversion-p nil)
+(defcustom mozc-temp-auto-conversion-p nil
+  "Non-nil means that mozc-temp starts conversion when mozc-temp enabled.
+This behavior is like that you press the space key to convert preedit characters."
+  :type 'boolean
+  :group 'mozc-temp
+  :package-version '(mozc-temp . "0.1.0"))
 
-(defvar mozc-temp-remove-space-p t)
+(defcustom mozc-temp-remove-space-p t
+  "Non-nil means that mozc-temp removes a pre-space when converting.
+A pre-space is a space before a prefix string.
+
+     a pre-space
+          |
+          v
+  hogehoge hugahuga|
+           ^^^^^^^^
+       a prefix string"
+  :type 'boolean
+  :group 'mozc-temp
+  :package-version '(mozc-temp . "0.1.0"))
 
 (defvar mozc-temp-mode-map
   (let ((map (make-sparse-keymap)))
@@ -87,6 +113,7 @@ The default value means (\"|\" means the cursor position):
 (define-minor-mode mozc-temp-mode
   "Temporary mozc mode"
   :keymap mozc-temp-mode-map
+  :group 'mozc-temp
   (if mozc-temp-mode
       (mozc-mode 1)
     (mozc-mode -1)
