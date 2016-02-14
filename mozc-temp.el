@@ -56,7 +56,7 @@ This behavior is like that you press the space key to convert preedit characters
   :group 'mozc-temp
   :package-version '(mozc-temp . "0.1.0"))
 
-(defcustom mozc-temp-remove-space t
+(defcustom mozc-temp-remove-pre-space t
   "Non-nil means that mozc-temp removes a pre-space when converting.
 A pre-space is a space before a prefix string.
 
@@ -78,7 +78,7 @@ A pre-space is a space before a prefix string.
 (defvar mozc-temp--should-exit nil
   "Non-nil means that `mozc-temp-mode' should exit.")
 
-(defvar mozc-temp--space-overlay nil)
+(defvar mozc-temp--pre-space-overlay nil)
 
 (defvar mozc-temp--prefix-overlay nil)
 
@@ -90,9 +90,9 @@ A pre-space is a space before a prefix string.
 
 (defun mozc-temp--done ()
   (mozc-temp--delete-overlay-region mozc-temp--prefix-overlay)
-  (when mozc-temp-remove-space
+  (when mozc-temp-remove-pre-space
     (undo-boundary)
-    (mozc-temp--delete-overlay-region mozc-temp--space-overlay))
+    (mozc-temp--delete-overlay-region mozc-temp--pre-space-overlay))
   (mozc-temp-mode -1))
 
 (defun mozc-temp--handle-event (event)
@@ -103,10 +103,10 @@ A pre-space is a space before a prefix string.
         (mozc-temp--done)))))
 
 (defun mozc-temp--cleanup ()
-  (--each (list mozc-temp--space-overlay mozc-temp--prefix-overlay)
+  (--each (list mozc-temp--pre-space-overlay mozc-temp--prefix-overlay)
     (when (overlayp it)
       (delete-overlay it)))
-  (setq mozc-temp--space-overlay nil
+  (setq mozc-temp--pre-space-overlay nil
         mozc-temp--prefix-overlay nil))
 
 ;;;###autoload
@@ -158,12 +158,12 @@ A pre-space is a space before a prefix string.
       (save-excursion
         (goto-char head)
         (when (re-search-backward "\\w\\( \\)\\=" (point-at-bol) t)
-          (-when-let* ((space-beginning (match-beginning 1))
-                       (space-end (match-end 1)))
-            (setq mozc-temp--space-overlay
-                  (make-overlay space-beginning space-end))
-            (when mozc-temp-remove-space
-              (overlay-put mozc-temp--space-overlay 'invisible t))))))
+          (-when-let* ((pre-space-beginning (match-beginning 1))
+                       (pre-space-end (match-end 1)))
+            (setq mozc-temp--pre-space-overlay
+                  (make-overlay pre-space-beginning pre-space-end))
+            (when mozc-temp-remove-pre-space
+              (overlay-put mozc-temp--pre-space-overlay 'invisible t))))))
     (mozc-temp-mode 1)
     (-each (append (string-to-list prefix)
                    (when mozc-temp-auto-conversion
