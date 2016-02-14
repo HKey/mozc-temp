@@ -73,14 +73,18 @@ A pre-space is a space before a prefix string.
 (defvar mozc-temp-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map [remap mozc-handle-event] #'mozc-temp--handle-event)
-    map))
+    map)
+  "A key map for `mozc-temp-mode'.")
 
 (defvar mozc-temp--should-exit nil
   "Non-nil means that `mozc-temp-mode' should exit.")
 
-(defvar mozc-temp--pre-space-overlay nil)
+(defvar mozc-temp--pre-space-overlay nil
+  "An overlay which indicates a pre-space.")
 
-(defvar mozc-temp--prefix-overlay nil)
+(defvar mozc-temp--prefix-overlay nil
+  "An overlay which indicates a prefix string.")
+
 
 (defun mozc-temp--delete-overlay-region (overlay)
   "Delete the text in the region of OVERLAY."
