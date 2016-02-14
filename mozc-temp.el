@@ -49,14 +49,14 @@ The default value means (\"|\" means the cursor position):
   :group 'mozc-temp
   :package-version '(mozc-temp . "0.1.0"))
 
-(defcustom mozc-temp-auto-conversion-p nil
+(defcustom mozc-temp-auto-conversion nil
   "Non-nil means that mozc-temp starts conversion when mozc-temp enabled.
 This behavior is like that you press the space key to convert preedit characters."
   :type 'boolean
   :group 'mozc-temp
   :package-version '(mozc-temp . "0.1.0"))
 
-(defcustom mozc-temp-remove-space-p t
+(defcustom mozc-temp-remove-space t
   "Non-nil means that mozc-temp removes a pre-space when converting.
 A pre-space is a space before a prefix string.
 
@@ -90,7 +90,7 @@ A pre-space is a space before a prefix string.
 
 (defun mozc-temp--done ()
   (mozc-temp--delete-overlay-region mozc-temp--prefix-overlay)
-  (when mozc-temp-remove-space-p
+  (when mozc-temp-remove-space
     (undo-boundary)
     (mozc-temp--delete-overlay-region mozc-temp--space-overlay))
   (mozc-temp-mode -1))
@@ -162,11 +162,11 @@ A pre-space is a space before a prefix string.
                        (space-end (match-end 1)))
             (setq mozc-temp--space-overlay
                   (make-overlay space-beginning space-end))
-            (when mozc-temp-remove-space-p
+            (when mozc-temp-remove-space
               (overlay-put mozc-temp--space-overlay 'invisible t))))))
     (mozc-temp-mode 1)
     (-each (append (string-to-list prefix)
-                   (when mozc-temp-auto-conversion-p
+                   (when mozc-temp-auto-conversion
                      '(? )))
       #'mozc-temp--handle-event)))
 
