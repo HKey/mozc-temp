@@ -146,6 +146,16 @@ A pre-space is a space before a prefix string.
       (and (re-search-backward mozc-temp-prefix-regexp (point-at-bol) t)
            (match-string 1)))))
 
+(defun mozc-temp--pre-space-position (point)
+  "Get a pre-space position just before POINT.
+This returns a list like (BEGINNING END).
+If there is no pre-space, this returns nil."
+  (save-excursion
+    (save-match-data
+      (goto-char point)
+      (when (re-search-backward "\\w\\( \\)\\=" (point-at-bol) t)
+        (list (match-beginning 1) (match-end 1))))))
+
 ;;;###autoload
 (defun mozc-temp-convert ()
   "Convert the current word with mozc."
@@ -160,14 +170,12 @@ A pre-space is a space before a prefix string.
     (overlay-put mozc-temp--prefix-overlay 'invisible t)
     (save-match-data
       (save-excursion
-        (goto-char head)
-        (when (re-search-backward "\\w\\( \\)\\=" (point-at-bol) t)
-          (-when-let* ((pre-space-beginning (match-beginning 1))
-                       (pre-space-end (match-end 1)))
+        (-when-let ((pre-space-beginning pre-space-end)
+                    (mozc-temp--pre-space-position head))
+          (when mozc-temp-remove-pre-space
             (setq mozc-temp--pre-space-overlay
                   (make-overlay pre-space-beginning pre-space-end))
-            (when mozc-temp-remove-pre-space
-              (overlay-put mozc-temp--pre-space-overlay 'invisible t))))))
+            (overlay-put mozc-temp--pre-space-overlay 'invisible t)))))
     (mozc-temp-mode 1)
     (-each (append (string-to-list prefix)
                    (when mozc-temp-auto-conversion
