@@ -153,7 +153,7 @@ If there is no pre-space, this returns nil."
   (save-excursion
     (save-match-data
       (goto-char point)
-      (when (re-search-backward "\\w\\( \\)\\=" (point-at-bol) t)
+      (when (re-search-backward "[^[:space:]]\\( \\)\\=" (point-at-bol) t)
         (list (match-beginning 1) (match-end 1))))))
 
 ;;;###autoload
