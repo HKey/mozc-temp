@@ -70,6 +70,14 @@ A pre-space is a space before a prefix string.
   :group 'mozc-temp
   :package-version '(mozc-temp . "0.1.0"))
 
+(defcustom mozc-temp-pre-space-regexp "[^[:space:]]\\( \\)\\="
+  "A regexp to detect a pre-space.
+The first group in this regexp indicates a pre-space.
+See also `mozc-temp-remove-pre-space'."
+  :type 'regexp
+  :group 'mozc-temp
+  :package-version '(mozc-temp . "0.1.0"))
+
 (defvar mozc-temp-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map [remap mozc-handle-event] #'mozc-temp--handle-event)
@@ -153,7 +161,7 @@ If there is no pre-space, this returns nil."
   (save-excursion
     (save-match-data
       (goto-char point)
-      (when (re-search-backward "[^[:space:]]\\( \\)\\=" (point-at-bol) t)
+      (when (re-search-backward mozc-temp-pre-space-regexp (point-at-bol) t)
         (list (match-beginning 1) (match-end 1))))))
 
 ;;;###autoload
