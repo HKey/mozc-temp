@@ -70,7 +70,7 @@ A pre-space is a space before a prefix string.
   :group 'mozc-temp
   :package-version '(mozc-temp . "0.1.0"))
 
-(defcustom mozc-temp-pre-space-regexp "[^[:space:]]\\( \\)\\="
+(defcustom mozc-temp-pre-space-regexp "[^[:space:]] ?\\( \\)\\="
   "A regexp to detect a pre-space.
 The first group in this regexp indicates a pre-space.
 See also `mozc-temp-remove-pre-space'."
