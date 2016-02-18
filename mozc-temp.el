@@ -36,7 +36,7 @@
   :prefix "mozc-temp-")
 
 (defcustom mozc-temp-prefix-regexp
-  (let ((convertibles "a-zA-Z-,.!?"))
+  (let ((convertibles "!-~"))
     (format "\\(?:^\\|[^%s]\\)\\([%s]+\\)\\=" convertibles convertibles))
   "A regexp to specify the prefix string for conversion.
 The prefix string is used as pre-input of mozc's conversion.
