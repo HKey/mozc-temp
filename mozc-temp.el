@@ -49,7 +49,7 @@ The default value means (\"|\" means the cursor position):
   :group 'mozc-temp
   :package-version '(mozc-temp . "0.1.0"))
 
-(defcustom mozc-temp-auto-conversion nil
+(defcustom mozc-temp-auto-conversion t
   "Non-nil means that mozc-temp starts conversion when mozc-temp enabled.
 This behavior is like that you press the space key to convert preedit characters."
   :type 'boolean
