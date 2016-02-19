@@ -148,7 +148,9 @@ See also `mozc-temp-remove-pre-space'."
 (defadvice mozc-fall-back-on-default-binding (after mozc-temp activate)
   (setq mozc-temp--should-exit t))
 
-(defun mozc-temp--get-prefix ()
+(defun mozc-temp--prefix-string ()
+  "Get a prefix string just before the current position of the cursor.
+If there is no prefix string, this returns nil."
   (save-excursion
     (save-match-data
       (and (re-search-backward mozc-temp-prefix-regexp (point-at-bol) t)
@@ -169,7 +171,7 @@ If there is no pre-space, this returns nil."
   "Convert the current word with mozc."
   (interactive)
   (-when-let* ((tail (point))
-               (prefix (mozc-temp--get-prefix))
+               (prefix (mozc-temp--prefix-string))
                (head (save-match-data
                        (save-excursion
                          (re-search-backward (regexp-quote prefix) nil t)))))
@@ -193,7 +195,7 @@ If there is no pre-space, this returns nil."
 ;;;###autoload
 (defun mozc-temp-convert-dwim ()
   (interactive)
-  (if (mozc-temp--get-prefix)
+  (if (mozc-temp--prefix-string)
       (mozc-temp-convert)
     (mozc-temp-mode 1)))
 
