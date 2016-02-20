@@ -100,7 +100,8 @@ See also `mozc-temp-remove-pre-space'."
     (delete-region (overlay-start overlay)
                    (overlay-end overlay))))
 
-(defun mozc-temp--done ()
+(defun mozc-temp--complete ()
+  "Complete the current mozc-temp session."
   (mozc-temp--delete-overlay-region mozc-temp--prefix-overlay)
   (when mozc-temp-remove-pre-space
     (undo-boundary)
@@ -112,7 +113,7 @@ See also `mozc-temp-remove-pre-space'."
   (let ((mozc-temp--should-exit nil))
     (prog1 (mozc-handle-event event)
       (when mozc-temp--should-exit
-        (mozc-temp--done)))))
+        (mozc-temp--complete)))))
 
 (defun mozc-temp--cleanup ()
   (--each (list mozc-temp--pre-space-overlay mozc-temp--prefix-overlay)
