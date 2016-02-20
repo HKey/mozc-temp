@@ -109,6 +109,8 @@ See also `mozc-temp-remove-pre-space'."
   (mozc-temp-mode -1))
 
 (defun mozc-temp--handle-event (event)
+  "A wrapper function for `mozc-handle-event'.
+EVENT is an argument for `mozc-handle-event'."
   (interactive (list last-command-event))
   (let ((mozc-temp--should-exit nil))
     (prog1 (mozc-handle-event event)
@@ -116,6 +118,7 @@ See also `mozc-temp-remove-pre-space'."
         (mozc-temp--complete)))))
 
 (defun mozc-temp--cleanup ()
+  "Cleanup mozc-temp session."
   (--each (list mozc-temp--pre-space-overlay mozc-temp--prefix-overlay)
     (when (overlayp it)
       (delete-overlay it)))
