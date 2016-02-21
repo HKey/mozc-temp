@@ -78,14 +78,14 @@ See also `mozc-temp-remove-pre-space'."
   :group 'mozc-temp
   :package-version '(mozc-temp . "0.1.0"))
 
-(defvar mozc-temp-mode-map
+(defvar mozc-temp--minor-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map [remap mozc-handle-event] #'mozc-temp--handle-event)
     map)
-  "A key map for `mozc-temp-mode'.")
+  "A key map for `mozc-temp--minor-mode'.")
 
 (defvar mozc-temp--should-exit nil
-  "Non-nil means that `mozc-temp-mode' should exit.")
+  "Non-nil means that `mozc-temp--minor-mode' should exit.")
 
 (defvar mozc-temp--pre-space-overlay nil
   "An overlay which indicates a pre-space.")
@@ -106,7 +106,7 @@ See also `mozc-temp-remove-pre-space'."
   (when mozc-temp-remove-pre-space
     (undo-boundary)
     (mozc-temp--delete-overlay-region mozc-temp--pre-space-overlay))
-  (mozc-temp-mode -1))
+  (mozc-temp--minor-mode -1))
 
 (defun mozc-temp--handle-event (event)
   "A wrapper function for `mozc-handle-event'.
@@ -125,12 +125,11 @@ EVENT is an argument for `mozc-handle-event'."
   (setq mozc-temp--pre-space-overlay nil
         mozc-temp--prefix-overlay nil))
 
-;;;###autoload
-(define-minor-mode mozc-temp-mode
+(define-minor-mode mozc-temp--minor-mode
   "Temporary mozc mode"
-  :keymap mozc-temp-mode-map
+  :keymap mozc-temp--minor-mode-map
   :group 'mozc-temp
-  (if mozc-temp-mode
+  (if mozc-temp--minor-mode
       (mozc-mode 1)
     (mozc-mode -1)
     (mozc-temp--cleanup)))
@@ -190,7 +189,7 @@ If there is no pre-space, this returns nil."
             (setq mozc-temp--pre-space-overlay
                   (make-overlay pre-space-beginning pre-space-end))
             (overlay-put mozc-temp--pre-space-overlay 'invisible t)))))
-    (mozc-temp-mode 1)
+    (mozc-temp--minor-mode 1)
     (-each (append (string-to-list prefix)
                    (when mozc-temp-auto-conversion
                      '(? )))
@@ -201,7 +200,7 @@ If there is no pre-space, this returns nil."
   (interactive)
   (if (mozc-temp--prefix-string)
       (mozc-temp-convert)
-    (mozc-temp-mode 1)))
+    (mozc-temp--minor-mode 1)))
 
 (provide 'mozc-temp)
 ;;; mozc-temp.el ends here
