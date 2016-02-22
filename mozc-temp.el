@@ -144,11 +144,13 @@ EVENT is an argument for `mozc-handle-event'."
   (mozc-protobuf-get mozc-send-key-event-result 'result))
 
 (defadvice mozc-send-key-event (after mozc-temp activate)
+  "Detect that a mozc-temp session should exit."
   (setq mozc-temp--should-exit
         (or (mozc-temp--conversion-completed ad-return-value)
             (mozc-temp--preedit-deleted ad-return-value))))
 
 (defadvice mozc-fall-back-on-default-binding (after mozc-temp activate)
+  "Detect that a mozc-temp session should exit."
   (setq mozc-temp--should-exit t))
 
 (defun mozc-temp--prefix-string ()
@@ -198,6 +200,9 @@ If there is no pre-space, this returns nil."
 
 ;;;###autoload
 (defun mozc-temp-convert-dwim ()
+  "Convert the current word or start a mozc-temp session.
+If there is a prefix string, this function calls `mozc-temp-convert'.
+If not, this function starts a mozc-temp session."
   (interactive)
   (unless mozc-temp--minor-mode
     (if (mozc-temp--prefix-string)
