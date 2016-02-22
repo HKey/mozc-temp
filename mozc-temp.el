@@ -173,34 +173,36 @@ If there is no pre-space, this returns nil."
 (defun mozc-temp-convert ()
   "Convert the current word with mozc."
   (interactive)
-  (-when-let* ((tail (point))
-               (prefix (mozc-temp--prefix-string))
-               (head (save-match-data
-                       (save-excursion
-                         (re-search-backward (regexp-quote prefix) nil t)))))
-    (undo-boundary)
-    (setq mozc-temp--prefix-overlay (make-overlay head tail))
-    (overlay-put mozc-temp--prefix-overlay 'invisible t)
-    (save-match-data
-      (save-excursion
-        (-when-let ((pre-space-beginning pre-space-end)
-                    (mozc-temp--pre-space-position head))
-          (when mozc-temp-remove-pre-space
-            (setq mozc-temp--pre-space-overlay
-                  (make-overlay pre-space-beginning pre-space-end))
-            (overlay-put mozc-temp--pre-space-overlay 'invisible t)))))
-    (mozc-temp--minor-mode 1)
-    (-each (append (string-to-list prefix)
-                   (when mozc-temp-auto-conversion
-                     '(? )))
-      #'mozc-temp--handle-event)))
+  (unless mozc-temp--minor-mode
+    (-when-let* ((tail (point))
+                 (prefix (mozc-temp--prefix-string))
+                 (head (save-match-data
+                         (save-excursion
+                           (re-search-backward (regexp-quote prefix) nil t)))))
+      (undo-boundary)
+      (setq mozc-temp--prefix-overlay (make-overlay head tail))
+      (overlay-put mozc-temp--prefix-overlay 'invisible t)
+      (save-match-data
+        (save-excursion
+          (-when-let ((pre-space-beginning pre-space-end)
+                      (mozc-temp--pre-space-position head))
+            (when mozc-temp-remove-pre-space
+              (setq mozc-temp--pre-space-overlay
+                    (make-overlay pre-space-beginning pre-space-end))
+              (overlay-put mozc-temp--pre-space-overlay 'invisible t)))))
+      (mozc-temp--minor-mode 1)
+      (-each (append (string-to-list prefix)
+                     (when mozc-temp-auto-conversion
+                       '(? )))
+        #'mozc-temp--handle-event))))
 
 ;;;###autoload
 (defun mozc-temp-convert-dwim ()
   (interactive)
-  (if (mozc-temp--prefix-string)
-      (mozc-temp-convert)
-    (mozc-temp--minor-mode 1)))
+  (unless mozc-temp--minor-mode
+    (if (mozc-temp--prefix-string)
+        (mozc-temp-convert)
+      (mozc-temp--minor-mode 1))))
 
 (provide 'mozc-temp)
 ;;; mozc-temp.el ends here
