@@ -1,0 +1,25 @@
+language: ruby
+
+before_install:
+  # install evm
+  - curl -fsSL https://raw.githubusercontent.com/rejeep/evm/master/go | bash
+  - export PATH="$HOME/.evm/bin:$PATH"
+  - evm config path /tmp
+
+  # install emacs
+  - evm install $EVM_EMACS --use --skip
+
+before_script:
+  - ruby --version
+  - rake --version
+  - emacs --version
+
+script:
+  - rake compilation_test
+
+env:
+  - EVM_EMACS=emacs-24.1-travis
+  - EVM_EMACS=emacs-24.2-travis
+  - EVM_EMACS=emacs-24.3-travis
+  - EVM_EMACS=emacs-24.4-travis
+  - EVM_EMACS=emacs-24.5-travis
