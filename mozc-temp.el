@@ -93,6 +93,9 @@ See also `mozc-temp-remove-pre-space'."
 (defvar mozc-temp--prefix-overlay nil
   "An overlay which indicates a prefix string.")
 
+(defvar mozc-temp--quietly nil
+  "Non-nil means that mozc should not show messages.")
+
 
 (defun mozc-temp--delete-overlay-region (overlay)
   "Delete the text in the region of OVERLAY."
@@ -171,6 +174,23 @@ If there is no pre-space, this returns nil."
       (when (re-search-backward mozc-temp-pre-space-regexp (point-at-bol) t)
         (list (match-beginning 1) (match-end 1))))))
 
+(defun mozc-temp--send-string (string)
+  "Send STRING to mozc session."
+  (let ((chars (string-to-list string)))
+    (let ((mozc-temp--quietly t))
+      (-each (butlast chars) #'mozc-temp--handle-event))
+    (mozc-temp--handle-event (-last-item chars))))
+
+(defadvice mozc-cand-echo-area-update (around mozc-temp activate)
+  "Make mozc quiet while sending characters to mozc."
+  (unless mozc-temp--quietly
+    ad-do-it))
+
+(defadvice mozc-cand-overlay-update (around mozc-temp activate)
+  "Make mozc quiet while sending characters to mozc."
+  (unless mozc-temp--quietly
+    ad-do-it))
+
 ;;;###autoload
 (defun mozc-temp-convert ()
   "Convert the current word with mozc."
@@ -193,10 +213,9 @@ If there is no pre-space, this returns nil."
                     (make-overlay pre-space-beginning pre-space-end))
               (overlay-put mozc-temp--pre-space-overlay 'invisible t)))))
       (mozc-temp--minor-mode 1)
-      (-each (append (string-to-list prefix)
-                     (when mozc-temp-auto-conversion
-                       '(? )))
-        #'mozc-temp--handle-event))))
+      (mozc-temp--send-string
+       (concat prefix
+               (if mozc-temp-auto-conversion " " ""))))))
 
 ;;;###autoload
 (defun mozc-temp-convert-dwim ()
