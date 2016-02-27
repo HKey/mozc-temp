@@ -1,6 +1,7 @@
 # mozc-temp
 
 [![Build Status](https://travis-ci.org/HKey/mozc-temp.svg?branch=master)](https://travis-ci.org/HKey/mozc-temp)
+[![MELPA](https://melpa.org/packages/mozc-temp-badge.svg)](https://melpa.org/#/mozc-temp)
 
 mozc-tempはmozc.elによる入力をモードレス化するラッパーです。
 
