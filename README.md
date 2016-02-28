@@ -24,6 +24,10 @@ ac-mozcとの違いは、これがmozc.elのインターフェイスに対する
 (global-set-key (kbd "M-n") #'mozc-temp-convert)
 ```
 
+## バージョニング
+
+mozc-tempのバージョニングは[Semantic Versioning 2.0.0](http://semver.org/spec/v2.0.0.html)に従います。
+
 ## コマンド
 
 mozc-tempが提供するコマンドは下記の2つです。
