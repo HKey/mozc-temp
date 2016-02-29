@@ -25,6 +25,16 @@ ac-mozcとの違いは、これがmozc.elのインターフェイスに対する
 (global-set-key (kbd "M-n") #'mozc-temp-convert)
 ```
 
+## インストール
+
+mozc-tempは[MELPA](https://melpa.org/#/)、もしくは[MELPA Stable](https://stable.melpa.org/#/)から下記の手順でインストールすることができます。
+
+1. MELPA、もしくはMELPA Stableを使うよう、Emacsのパッケージマネージャーを設定します。  
+   設定方法に関するMELPAのドキュメントは[ここ](https://github.com/melpa/melpa#usage)にあります。
+
+2. mozc-tempをインストールします。  
+   `M-x package-install mozc-temp`
+
 ## バージョニング
 
 mozc-tempのバージョニングは[Semantic Versioning 2.0.0](http://semver.org/spec/v2.0.0.html)に従います。
