@@ -13,6 +13,8 @@ mozc-tempはmozc.elによる入力をモードレス化するラッパーです�
 ac-mozcとの違いは、これがmozc.elのインターフェイスに対するラッパーであるということです。
 そのため、変換時の候補選択はmozc.elのものと同じ操作が可能です。
 
+![screencast](images/screencast.gif)
+
 ## 使い方
 
 変換したい文字列（ローマ字など）を入力した後、`mozc-temp-convert`、もしくは`mozc-temp-convert-dwim`を呼び出します。
