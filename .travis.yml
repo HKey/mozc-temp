@@ -28,4 +28,4 @@ script:
 env:
   - EVM_EMACS=emacs-24.5-travis
   - EVM_EMACS=emacs-25.3-travis
-  - EVM_EMACS=emacs-26.1-travis
+  - EVM_EMACS=emacs-26.3-travis-linux-xenial
